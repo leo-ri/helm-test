@@ -35,7 +35,7 @@ jobs:
 
       - name: Add Helm repos
         run: |
-          helm repo add l https://leori.github.io/helm-test
+          helm repo add l https://leo-ri.github.io/helm-test
 
       - name: Helm Chart Releaser
         # You may pin to the exact commit or the version.
@@ -46,7 +46,7 @@ jobs:
         with:
           # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
           charts_dir: charts/atlas-operator/charts
-          charts_repo_url: https://leori.github.io/helm-test
+          charts_repo_url: https://leo-ri.github.io/helm-test
 
       - name: Helm Chart Releaser
         # You may pin to the exact commit or the version.
@@ -57,4 +57,4 @@ jobs:
         with:
           # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
           charts_dir: charts
-          charts_repo_url: https://leori.github.io/helm-test
+          charts_repo_url: https://leo-ri.github.io/helm-test

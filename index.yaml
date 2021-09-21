@@ -1,20 +1,23 @@
 apiVersion: v1
 entries:
-  mongodb-enterprise-operator:
+  atlas-cluster:
   - apiVersion: v2
-    created: "2020-10-13T19:27:13.477973+01:00"
-    description: MongoDB Kubernetes Enterprise Operator deployment
-    digest: aae8357dd8fbdb69daf3d75f9d40bbcb8248c1a05c88b139cdc8d7e2cfecb24d
-    home: https://github.com/mongodb/helm-charts
+    appVersion: 0.6.1
+    created: "2021-09-21T21:14:03.7531046+03:00"
+    description: A Helm chart to manage Atlas resources with Atlas operator
+    digest: adfcd1d0bad21398b00980e64a122d17c59a8980446924f92fa4457cddc98967
+    home: https://github.com/mongodb/mongodb-enterprise-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
     keywords:
     - mongodb
     - database
     - nosql
-    kubeVersion: '>=1.15-0'
     maintainers:
-    - name: MongoDB Cloud Team
-    name: mongodb-enterprise-operator
+    - email: support@mongodb.com
+      name: MongoDB
+    name: atlas-cluster
+    type: application
     urls:
-    - https://github.com/mongodb/helm-charts/mongodb-enterprise-operator-0.1.0.tgz
-    version: 0.1.0
-generated: "2020-10-13T19:27:13.475384+01:00"
+    - https://github.com/leo-ri/helm-test/releases/download/atlas-cluster-0.1.7/atlas-cluster-0.1.7.tgz
+    version: 0.1.7
+generated: "2021-09-21T21:14:03.7531441+03:00"
