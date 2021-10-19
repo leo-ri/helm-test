@@ -1,5 +1,0 @@
-private/
-*.crt
-*.key
-*.tgz
-.DS_Store
