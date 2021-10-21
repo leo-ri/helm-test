@@ -148,8 +148,8 @@ package_charts_inside_folders() {
         mkdir -p .cr-index
 
         for chart in "${changed_charts[@]}"; do
-            if [[ -d "$chart" ]]; then
-                package_chart "$chart"
+            if [[ -d "$charts_dir/$chart" ]]; then
+                package_chart "$charts_dir/$chart"
             else
                 echo "Chart '$chart' no longer exists in repo. Skipping it..."
             fi
