@@ -36,6 +36,7 @@ jobs:
       - name: Add Helm repos
         run: |
           helm repo add l https://leo-ri.github.io/helm-test
+          chmod +x ./.github/actions/releaser/cr.sh
 
       - name: Helm Chart Releaser
         uses: ./.github/actions/releaser
