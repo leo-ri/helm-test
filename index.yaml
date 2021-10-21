@@ -20,4 +20,47 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/atlas-cluster-0.1.7/atlas-cluster-0.1.7.tgz
     version: 0.1.7
-generated: "2021-09-21T21:28:19.2771819+03:00"
+  mongodb-atlas-operator-crds:
+  - apiVersion: v2
+    appVersion: 0.6.1
+    created: "2021-10-21T17:14:33.245351431Z"
+    description: MongoDB Atlas Operator CRDs - Helm chart for installing and upgrading
+      Custom Resource Definitions (CRDs) for the Atlas Operator.
+    digest: ea8aa1b8ed3eb18690da1e9e341fbdeda3afed7bf2da0f7d9e3fa630e7b1e78d
+    home: https://github.com/mongodb/mongodb-atlas-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - mongodb
+    - atlas
+    - database
+    - cluster
+    - nosql
+    kubeVersion: '>=1.15.0-0'
+    maintainers:
+    - email: support@mongodb.com
+      name: MongoDB
+    name: mongodb-atlas-operator-crds
+    type: application
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/mongodb-atlas-operator-crds-0.2.1/mongodb-atlas-operator-crds-0.2.1.tgz
+    version: 0.2.1
+  mongodb-enterprise-operator:
+  - apiVersion: v2
+    created: "2021-10-21T17:14:33.417684287Z"
+    description: MongoDB Kubernetes Enterprise Operator deployment
+    digest: c2f8330fd3c06937e6adcbd2055122b92421cdf34d306becb990c3ab56d636ec
+    home: https://github.com/mongodb/helm-charts
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - mongodb
+    - database
+    - nosql
+    kubeVersion: '>=1.16-0'
+    maintainers:
+    - email: belika@hotmail.com
+      name: theburi
+    name: mongodb-enterprise-operator
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/mongodb-enterprise-operator-0.3.1/mongodb-enterprise-operator-0.3.1.tgz
+    version: 0.3.1
+generated: "2021-10-21T17:14:33.417690687Z"
