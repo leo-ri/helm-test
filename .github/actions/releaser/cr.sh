@@ -161,7 +161,7 @@ package_charts_inside_folders() {
         echo "Nothing to do. No chart changes detected."
     fi
 
-    popd > /dev/null
+    # popd > /dev/null
 }
 
 parse_command_line() {
