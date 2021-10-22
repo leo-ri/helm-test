@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# Release changed charts with updated version only
+
 set -o errexit
 set -o nounset
 set -o pipefail
@@ -32,80 +34,38 @@ main() {
 
     : "${CR_TOKEN:?Environment variable CR_TOKEN must be set}"
 
-    print_line
-    echo 'Find all dependencies' #TODO it should be REMOTE DEPENDENCY. add it
-    dependencies=($(awk '/dependencies:/,/name:/{print $0}' $charts_dir/*/Chart.yaml | awk -F : '/name/{print $2}'))
-    local target_folders
-    for dependency in "${dependencies[@]}"; do
-        print_line
-        echo "dependency: $dependency"
-        folder_name=$(grep "^name: $dependency" $charts_dir/*/Chart.yaml | awk -F / '{print $2}')
-        echo "dependency inside folder: $folder_name"
-        #TODO this is look complicated
-        if [[ -n "${target_folders:-}" ]]; then
-            if [[ ! "${target_folders[*]}" =~  $folder_name ]]; then
-                target_folders+=("$folder_name")
-                echo "ECHO CURRENT" "${target_folders[@]}"
-            fi
-        else
-            target_folders+=("$folder_name")
-            echo "INIT WITH " "${target_folders[@]}"
-        fi
-    done
+    local target_folders=()
 
-    #all charts folder
-    #ls -d charts/*/
-    all_charts_folders=($(ls -d charts/*/Chart.yaml | awk -F / '{print $2}'))
-    # for i in "${target_folders[@]}"; do
-    #     all_charts_folders=(${all_charts_folders[@]//*$i*})
-    # done
-    # echo "the rest ccharts:"  "${all_charts_folders[@]}"
-    # exit 1
-    # local changed_charts=()
-    # readarray -t changed_charts <<< "$(lookup_changed_charts "$tag")"
-    # for chart in "${changed_charts[@]}"; do
-    #     echo "$chart"
-    # done
+    print_line_separator
+    echo 'Find all dependencies. Split folders in two lists' #TODO it should be REMOTE DEPENDENCY. add it
+    mapfile -t dependencies< <(find_dependency_folders)
+    mapfile -t all_charts_folders< <(find "$charts_dir" -maxdepth 2 -type f -name Chart.yaml | awk -F / '{print $2}')
 
-    print_line
-    echo "realise first charts in folders: " "${target_folders[@]}"
-    package_charts_inside_folders "${target_folders[@]}"
-    package_charts_inside_folders "${all_charts_folders[@]}"
-
-
-        # look last tag for dependency
-        # discovering changed charts
-        # echo "pack dependency"
-        # if folder found - pack
-
-    # release pack
-    # update index
-
-    # find all folders without dependency
-
-    # look at all folder matrix : folder name > chart name > dependency name
-    # look if `dependency` name in `chart name`
-    # look last tag for dependency
-    # discovering changed charts
-
-    # create 2 matrix with dependency and without
-
-
-
-    #get chart folders only
-    #for each folder look what commit id for last release, if no release - release it
-    #check if there changes, if there are changes - release it
+    print_line_separator
+    echo "Realise dependencies first: " "${dependencies[@]}"
+    release_charts_inside_folders "${dependencies[@]}"
+    release_charts_inside_folders "${all_charts_folders[@]}"
 }
 
-print_line() {
+print_line_separator() {
     echo "============================================="
 }
 
-package_charts_inside_folders() {
+find_dependency_folders() {
+    mapfile -t dependencies< <(awk '/dependencies:/,/name:/{print $0}' $charts_dir/*/Chart.yaml | awk -F ": " '/name/{print $2}')
+    for dependency in "${dependencies[@]}"; do
+        folder_name=$(grep "^name: $dependency" $charts_dir/*/Chart.yaml | awk -F / '{print $2}')
+        [[ ! "${target_folders[*]}" =~  $folder_name ]] && target_folders+=("$folder_name")
+    done
+    echo "${target_folders[@]}"
+}
+
+release_charts_inside_folders() {
     local folders=("$@")
+
     local changed_charts=()
     for folder in "${folders[@]}"; do
-        print_line
+        print_line_separator
         echo "Looking up latest release tag for $charts_dir/$folder/Chart.yaml"
         local chart_name
         chart_name=$(awk '/^name/{print $2}' "$charts_dir/$folder/Chart.yaml")
@@ -117,28 +77,19 @@ package_charts_inside_folders() {
             echo "Check if $chart_name was changed since last release"
             local changed_files
             changed_files=$(git diff --find-renames --name-only "$tag" -- "$charts_dir/$folder")
+            # ignore if chart version == release version do not release
+
             [[ -z "$changed_files" ]] && changed_charts+=("$folder")
-
-            # echo $changed_files
-            # local depth=$(( $(tr "/" "\n" <<< "$folder" | sed '/^\(\.\)*$/d' | wc -l) + 1 ))
-            # local fields="1-${depth}"
-
-            # cut -d '/' -f "$fields" <<< "$changed_files" | uniq | filter_charts
         else
             echo "\"$chart_name\" was never released. Adding folder \"$folder\" to the list for release"
             changed_charts+=("$folder")
         fi
-    echo "changed : " "${changed_charts[@]}"
-
     done
-    # exit 1
+    echo "changed charts: " "${changed_charts[@]}"
 
-    # readarray -t changed_charts <<< "$(lookup_changed_charts "$tag")"
 
-    # exit 1
-
-    install_chart_releaser
     if [[ -n "${changed_charts[*]}" ]]; then
+        install_chart_releaser
         rm -rf .cr-release-packages
         mkdir -p .cr-release-packages
 
@@ -158,8 +109,6 @@ package_charts_inside_folders() {
     else
         echo "Nothing to do. No chart changes detected."
     fi
-
-    # popd > /dev/null
 }
 
 parse_command_line() {
@@ -277,29 +226,28 @@ install_chart_releaser() {
     fi
 }
 
-lookup_latest_tag_of_foder() { # replace for lookup_latest_tag
+lookup_latest_tag_of_foder() {
     local chart_folder_name=$1
-    echo $chart_folder_name
 
     git fetch --tags > /dev/null 2>&1
-
     tag=$(git describe --tags --abbrev=0 --match="$chart_folder_name*")
-    err=$(echo $?)
+    err=$? # TODO
     if [[ $err = 0 ]]; then
         git rev-list -n 1 "$tag"
     fi
 }
 
-lookup_changed_chart() {
-    local commit="$1"
+lookup_changed_charts_in_folder() {
+    local folder="$1"
+    # local commit="$1"
 
-    local changed_files
-    changed_files=$(git diff --find-renames --name-only "$commit" -- "$charts_dir")
+    # local changed_files
+    # changed_files=$(git diff --find-renames --name-only "$commit" -- "$charts_dir")
 
-    local depth=$(( $(tr "/" "\n" <<< "$charts_dir" | sed '/^\(\.\)*$/d' | wc -l) + 1 ))
-    local fields="1-${depth}"
+    # local depth=$(( $(tr "/" "\n" <<< "$charts_dir" | sed '/^\(\.\)*$/d' | wc -l) + 1 ))
+    # local fields="1-${depth}"
 
-    cut -d '/' -f "$fields" <<< "$changed_files" | uniq | filter_charts
+    # cut -d '/' -f "$fields" <<< "$changed_files" | uniq | filter_charts
 }
 
 package_chart() {
