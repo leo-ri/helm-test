@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
 set -o errexit
-# set -o nounset
-# set -o pipefail
+set -o nounset
+set -o pipefail
 
 DEFAULT_CHART_RELEASER_VERSION=v1.2.1
 
@@ -32,10 +32,6 @@ main() {
 
     : "${CR_TOKEN:?Environment variable CR_TOKEN must be set}"
 
-    local repo_root
-    repo_root=$(git rev-parse --show-toplevel)
-    pushd "$repo_root" > /dev/null
-
     print_line
     echo 'Find all dependencies' #TODO it should be REMOTE DEPENDENCY. add it
     dependencies=($(awk '/dependencies:/,/name:/{print $0}' $charts_dir/*/Chart.yaml | awk -F : '/name/{print $2}'))
@@ -59,6 +55,12 @@ main() {
 
     #all charts folder
     #ls -d charts/*/
+    all_charts_folders=($(ls -d charts/*/Chart.yaml | awk -F / '{print $2}'))
+    # for i in "${target_folders[@]}"; do
+    #     all_charts_folders=(${all_charts_folders[@]//*$i*})
+    # done
+    # echo "the rest ccharts:"  "${all_charts_folders[@]}"
+    # exit 1
     # local changed_charts=()
     # readarray -t changed_charts <<< "$(lookup_changed_charts "$tag")"
     # for chart in "${changed_charts[@]}"; do
@@ -68,6 +70,7 @@ main() {
     print_line
     echo "realise first charts in folders: " "${target_folders[@]}"
     package_charts_inside_folders "${target_folders[@]}"
+    package_charts_inside_folders "${all_charts_folders[@]}"
 
 
         # look last tag for dependency
@@ -92,9 +95,6 @@ main() {
     #get chart folders only
     #for each folder look what commit id for last release, if no release - release it
     #check if there changes, if there are changes - release it
-
-    exit 1
-
 }
 
 print_line() {
@@ -110,8 +110,6 @@ package_charts_inside_folders() {
         local chart_name
         chart_name=$(awk '/^name/{print $2}' "$charts_dir/$folder/Chart.yaml")
         local tag
-
-
 
         if [ $(git tag -l "$chart_name-*") ]; then
             tag=$(lookup_latest_tag_of_foder "$chart_name")
@@ -285,46 +283,11 @@ lookup_latest_tag_of_foder() { # replace for lookup_latest_tag
 
     git fetch --tags > /dev/null 2>&1
 
-    # first_folder=$(ls -d */ | head -n 1)Chart.yaml
-    # chart_name=$(awk '/name:/{print $2}' "$first_folder" | head -n 1)
-
     tag=$(git describe --tags --abbrev=0 --match="$chart_folder_name*")
     err=$(echo $?)
     if [[ $err = 0 ]]; then
         git rev-list -n 1 "$tag"
     fi
-}
-
-lookup_latest_tag() {
-    git fetch --tags > /dev/null 2>&1
-
-    if ! git describe --tags --abbrev=0 2> /dev/null; then
-        git rev-list --max-parents=0 --first-parent HEAD
-    fi
-}
-
-filter_charts() {
-    while read -r chart; do
-        [[ ! -d "$chart" ]] && continue
-        local file="$chart/Chart.yaml"
-        if [[ -f "$file" ]]; then
-            echo "$chart"
-        else
-           echo "WARNING: $file is missing, assuming that '$chart' is not a Helm chart. Skipping." 1>&2
-        fi
-    done
-}
-
-lookup_changed_charts() {
-    local commit="$1"
-
-    local changed_files
-    changed_files=$(git diff --find-renames --name-only "$commit" -- "$charts_dir")
-
-    local depth=$(( $(tr "/" "\n" <<< "$charts_dir" | sed '/^\(\.\)*$/d' | wc -l) + 1 ))
-    local fields="1-${depth}"
-
-    cut -d '/' -f "$fields" <<< "$changed_files" | uniq | filter_charts
 }
 
 lookup_changed_chart() {
