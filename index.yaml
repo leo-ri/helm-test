@@ -20,6 +20,47 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/atlas-cluster-0.1.7/atlas-cluster-0.1.7.tgz
     version: 0.1.7
+  community-operator:
+  - apiVersion: v2
+    appVersion: 0.6.1
+    created: "2021-10-25T17:39:52.168764786Z"
+    description: 'MongoDB Community Operator - a Helm chart for installing and upgrading
+      Community Operator: the official Kubernetes operator allowing to manage MongoDB
+      Community resources from Kubernetes'
+    digest: ffb9efc7ca1a67104c73bc705f091e679263598f13a0bbeb5245146a0cc6ded7
+    home: https://github.com/mongodb/mongodb-kubernetes-operator
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - mongodb
+    - community
+    - database
+    - cluster
+    - nosql
+    kubeVersion: '>=1.15.0-0'
+    maintainers:
+    - email: support@mongodb.com
+      name: MongoDB
+    name: community-operator
+    type: application
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/community-operator-0.1.0/community-operator-0.1.0.tgz
+    version: 0.1.0
+  fastapi-sample-app:
+  - apiVersion: v2
+    appVersion: 1.0.0
+    created: "2021-10-25T17:39:52.37075349Z"
+    description: A Helm chart for Kubernetes
+    digest: b6838679162fa99875e417c8fac96a8607ac731b22743c56c41e2acddd163c62
+    home: https://github.com/mongodb/mongodb-atlas-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    maintainers:
+    - email: support@mongodb.com
+      name: MongoDB
+    name: fastapi-sample-app
+    type: application
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/fastapi-sample-app-0.1.0/fastapi-sample-app-0.1.0.tgz
+    version: 0.1.0
   mongodb-atlas-operator-crds:
   - apiVersion: v2
     appVersion: 0.6.1
@@ -44,6 +85,30 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/mongodb-atlas-operator-crds-0.2.1/mongodb-atlas-operator-crds-0.2.1.tgz
     version: 0.2.1
+  mongodb-enterprise-database:
+  - apiVersion: v2
+    created: "2021-10-25T17:39:52.556761489Z"
+    dependencies:
+    - condition: mongodb-enterprise-operator.enabled
+      name: mongodb-enterprise-operator
+      repository: https://mongodb.github.io/helm-charts
+      version: 0.3.0
+    description: MongoDB Kubernetes Enterprise Operator- MongoDB DataBase charts
+    digest: dd7c0c5c227ab048afc45a220385f77fafccc9cac9eaecec14a40c8c3b4eb100
+    home: https://github.com/mongodb/mongodb-enterprise-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - mongodb
+    - database
+    - nosql
+    kubeVersion: '>=1.15-0'
+    maintainers:
+    - email: belika@hotmail.com
+      name: theburi
+    name: mongodb-enterprise-database
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/mongodb-enterprise-database-0.2.4/mongodb-enterprise-database-0.2.4.tgz
+    version: 0.2.4
   mongodb-enterprise-operator:
   - apiVersion: v2
     created: "2021-10-25T17:20:03.805949491Z"
@@ -63,4 +128,29 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/mongodb-enterprise-operator-0.3.1/mongodb-enterprise-operator-0.3.1.tgz
     version: 0.3.1
-generated: "2021-10-25T17:20:03.805955091Z"
+  mongodb-enterprise-opsmanager:
+  - apiVersion: v2
+    created: "2021-10-25T17:39:52.76316905Z"
+    dependencies:
+    - condition: mongodb-enterprise-operator.enabled
+      name: mongodb-enterprise-operator
+      repository: https://mongodb.github.io/helm-charts
+      version: 0.3.0
+    description: MongoDB Kubernetes Enterprise Operator - Ops Manager Chart
+    digest: 7dce9f88fd5cb30336496529ee986627c16da0540c468ffac87900d1339f1faf
+    home: https://github.com/mongodb/mongodb-enterprise-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - opsManager
+    - mongodb
+    - database
+    - nosql
+    kubeVersion: '>=1.15-0'
+    maintainers:
+    - email: belika@hotmail.com
+      name: theburi
+    name: mongodb-enterprise-opsmanager
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/mongodb-enterprise-opsmanager-0.2.5/mongodb-enterprise-opsmanager-0.2.5.tgz
+    version: 0.2.5
+generated: "2021-10-25T17:39:52.76319575Z"
