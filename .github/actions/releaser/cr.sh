@@ -78,9 +78,11 @@ release_charts_inside_folders() {
             changed_files=$(git diff --find-renames --name-only "$tag" -- "$charts_dir/$folder")
 
             # ignore if chart version == release version > do not release
-            tag_version=$(echo "$tag" | cut -d '-' -f3)
-            chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
-            [[ -z "$changed_files" ]] && [[ "$tag_version" != "$chart_version" ]] && changed_charts+=("$folder")
+            # tag_version=$(echo "$tag" | cut -d '-' -f3)
+            # chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
+            if has_changed_version "$tag" "$folder" ; then
+                [[ -z "$changed_files" ]] && changed_charts+=("$folder")
+            fi
         else
             echo "\"$chart_name\" was never released. Adding folder \"$folder\" to the list for release"
             changed_charts+=("$folder")
@@ -100,12 +102,16 @@ release_charts_inside_folders() {
     fi
 }
 
-is_changed_version() {
+has_changed_version() {
     local tag=$1
-    local folder=
+    local folder=$2
     tag_version=$(echo "$tag" | cut -d '-' -f3)
     chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
-    [[ -z "$changed_files" ]] && [[ "$tag_version" != "$chart_version" ]] && changed_charts+=("$folder")
+    if [[ "$tag_version" != "$chart_version" ]]; then
+        return 1
+    else
+        return 0
+    fi
 }
 
 parse_command_line() {
@@ -201,6 +207,7 @@ parse_command_line() {
 }
 
 install_chart_releaser() {
+    print_line_separator
     if [[ ! -d "$RUNNER_TOOL_CACHE" ]]; then
         echo "Cache directory '$RUNNER_TOOL_CACHE' does not exist" >&2
         exit 1
@@ -274,19 +281,20 @@ lookup_changed_charts_in_folder() {
 }
 
 package_charts() {
+    print_line_separator
     local changed_charts=("$@")
     for chart in "${changed_charts[@]}"; do
-        if [[ -d "$charts_dir/$chart" ]]; then
-            package_chart "$charts_dir/$chart"
-            local args=("$chart" --package-path .cr-release-packages)
+        folder="$charts_dir/$chart"
+        if [[ -d "$folder" ]]; then
+            local args=("$folder" --package-path .cr-release-packages)
             if [[ -n "$config" ]]; then
                 args+=(--config "$config")
             fi
 
-            echo "Packaging chart '$chart'..."
+            echo "Packaging chart folder '$folder'..."
             cr package "${args[@]}"
         else
-            echo "Chart '$chart' no longer exists in repo. Skipping it..."
+            echo "Chart '$folder' no longer exists in repo. Skipping it..."
         fi
     done
 }
