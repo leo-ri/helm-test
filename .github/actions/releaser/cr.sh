@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# Release changed charts with updated version only
+# Release changed charts with updated version inside Chart.yaml only(!)
 
 set -o errexit
 set -o nounset
@@ -37,7 +37,7 @@ main() {
     local target_folders=()
 
     print_line_separator
-    echo 'Find all dependencies. Split folders in two lists' #TODO it should be REMOTE DEPENDENCY. add it
+    echo 'Find all dependencies. Split folders in two lists'
     mapfile -t dependencies< <(find_dependency_folders)
     mapfile -t all_charts_folders< <(find "$charts_dir" -maxdepth 2 -type f -name Chart.yaml | awk -F / '{print $2}')
 
@@ -55,31 +55,32 @@ find_dependency_folders() {
     mapfile -t dependencies< <(awk '/dependencies:/,/name:/{print $0}' $charts_dir/*/Chart.yaml | awk -F ": " '/name/{print $2}')
     for dependency in "${dependencies[@]}"; do
         folder_name=$(grep "^name: $dependency" $charts_dir/*/Chart.yaml | awk -F / '{print $2}')
-        [[ ! "${target_folders[*]}" =~  $folder_name ]] && target_folders+=("$folder_name")
+        [[ ! "${target_folders[*]}" =~  $folder_name ]] && target_folders+=("$folder_name") && echo "$folder_name"
     done
-    echo "${target_folders[@]}"
 }
 
 release_charts_inside_folders() {
     local folders=("$@")
-
     local changed_charts=()
     for folder in "${folders[@]}"; do
         print_line_separator
-        echo "Looking up latest release tag for $charts_dir/$folder/Chart.yaml"
         local chart_name
-        chart_name=$(awk '/^name/{print $2}' "$charts_dir/$folder/Chart.yaml")
         local tag
 
-        if [ $(git tag -l "$chart_name-*") ]; then
+        echo "Looking up latest release tag for \"$charts_dir/$folder/Chart.yaml\""
+        chart_name=$(awk '/^name/{print $2}' "$charts_dir/$folder/Chart.yaml")
+
+        if [ "$(git tag -l "$chart_name-*")" ]; then
             tag=$(lookup_latest_tag_of_foder "$chart_name")
             echo "Discovering changed charts since '$tag'...."
             echo "Check if $chart_name was changed since last release"
             local changed_files
             changed_files=$(git diff --find-renames --name-only "$tag" -- "$charts_dir/$folder")
-            # ignore if chart version == release version do not release
 
-            [[ -z "$changed_files" ]] && changed_charts+=("$folder")
+            # ignore if chart version == release version > do not release
+            tag_version=$(echo "$tag" | cut -d '-' -f3)
+            chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
+            [[ -z "$changed_files" ]] && [[ "$tag_version" != "$chart_version" ]] && changed_charts+=("$folder")
         else
             echo "\"$chart_name\" was never released. Adding folder \"$folder\" to the list for release"
             changed_charts+=("$folder")
@@ -87,28 +88,24 @@ release_charts_inside_folders() {
     done
     echo "changed charts: " "${changed_charts[@]}"
 
-
+    # countinue only with changed charts
     if [[ -n "${changed_charts[*]}" ]]; then
         install_chart_releaser
-        rm -rf .cr-release-packages
-        mkdir -p .cr-release-packages
-
-        rm -rf .cr-index
-        mkdir -p .cr-index
-
-        for chart in "${changed_charts[@]}"; do
-            if [[ -d "$charts_dir/$chart" ]]; then
-                package_chart "$charts_dir/$chart"
-            else
-                echo "Chart '$chart' no longer exists in repo. Skipping it..."
-            fi
-        done
-
+        cleanup_releaser
+        package_charts "${changed_charts[@]}"
         release_charts
         update_index
     else
         echo "Nothing to do. No chart changes detected."
     fi
+}
+
+is_changed_version() {
+    local tag=$1
+    local folder=
+    tag_version=$(echo "$tag" | cut -d '-' -f3)
+    chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
+    [[ -z "$changed_files" ]] && [[ "$tag_version" != "$chart_version" ]] && changed_charts+=("$folder")
 }
 
 parse_command_line() {
@@ -226,6 +223,14 @@ install_chart_releaser() {
     fi
 }
 
+cleanup_releaser() {
+    rm -rf .cr-release-packages
+    mkdir -p .cr-release-packages
+
+    rm -rf .cr-index
+    mkdir -p .cr-index
+}
+
 lookup_latest_tag_of_foder() {
     local chart_folder_name=$1
 
@@ -239,6 +244,24 @@ lookup_latest_tag_of_foder() {
 
 lookup_changed_charts_in_folder() {
     local folder="$1"
+    local chart_name
+    local tag
+    chart_name=$(awk '/^name/{print $2}' "$charts_dir/$folder/Chart.yaml")
+    if [ "$(git tag -l "$chart_name-*")" ]; then
+        tag=$(lookup_latest_tag_of_foder "$chart_name")
+        echo "Discovering changed charts since '$tag'...."
+        echo "Check if $chart_name was changed since last release"
+        local changed_files
+        changed_files=$(git diff --find-renames --name-only "$tag" -- "$charts_dir/$folder")
+        # ignore if chart version == release version do not release
+
+        [[ -z "$changed_files" ]] && changed_charts+=("$folder")
+    else
+        echo "\"$chart_name\" was never released. Adding folder \"$folder\" to the list for release"
+        changed_charts+=("$folder")
+    fi
+
+
     # local commit="$1"
 
     # local changed_files
@@ -250,17 +273,35 @@ lookup_changed_charts_in_folder() {
     # cut -d '/' -f "$fields" <<< "$changed_files" | uniq | filter_charts
 }
 
-package_chart() {
-    local chart="$1"
+package_charts() {
+    local changed_charts=("$@")
+    for chart in "${changed_charts[@]}"; do
+        if [[ -d "$charts_dir/$chart" ]]; then
+            package_chart "$charts_dir/$chart"
+            local args=("$chart" --package-path .cr-release-packages)
+            if [[ -n "$config" ]]; then
+                args+=(--config "$config")
+            fi
 
-    local args=("$chart" --package-path .cr-release-packages)
-    if [[ -n "$config" ]]; then
-        args+=(--config "$config")
-    fi
-
-    echo "Packaging chart '$chart'..."
-    cr package "${args[@]}"
+            echo "Packaging chart '$chart'..."
+            cr package "${args[@]}"
+        else
+            echo "Chart '$chart' no longer exists in repo. Skipping it..."
+        fi
+    done
 }
+
+# package_chart() {
+#     local chart="$1"
+
+#     local args=("$chart" --package-path .cr-release-packages)
+#     if [[ -n "$config" ]]; then
+#         args+=(--config "$config")
+#     fi
+
+#     echo "Packaging chart '$chart'..."
+#     cr package "${args[@]}"
+# }
 
 release_charts() {
     local args=(-o "$owner" -r "$repo" -c "$(git rev-parse HEAD)")
