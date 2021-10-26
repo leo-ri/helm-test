@@ -97,32 +97,26 @@ has_changed() {
     local folder=$1
     local chart_name
     chart_name=$(awk '/^name/{print $2}' "$charts_dir/$folder/Chart.yaml")
-    tag=$(lookup_latest_chart_tag "$chart_name")
+    tag=$(get_latest_tag "$chart_name")
     changed_files=$(git diff --find-renames --name-only "$tag" -- "$charts_dir/$folder")
 
+    echo "Looking for versions..."
     tag_version=$(echo "$tag" | awk -F '-' '{print $NF}') # sample-0.1.1 | 0.1.1
-    chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
+    chart_version=$(awk '/^version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
     echo "version from tag: $tag_version"
     echo "version from chart: $chart_version"
-    if [[ "$tag_version" != "$chart_version" ]] && [[ ! -z "$changed_files" ]]; then
-        return 1
-    else
+
+    if [[ "$tag_version" != "$chart_version" ]] && [[ -n "$changed_files" ]]; then
         return 0
     fi
+    return 1
 }
 
-lookup_latest_chart_tag() {
+get_latest_tag(){
     local name=$1
 
     git fetch --tags > /dev/null 2>&1
-    tag=$(git describe --tags --abbrev=0 --match="$name*")
-    err=$?
-    # echo "err : $err"
-    if [[ $err = 0 ]]; then
-        git rev-list -n 1 "$tag"
-    else
-        return 1
-    fi
+    git describe --tags --abbrev=0 --match="$name*"
 }
 
 parse_command_line() {
