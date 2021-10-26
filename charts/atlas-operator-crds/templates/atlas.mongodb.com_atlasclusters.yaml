@@ -19,7 +19,7 @@ spec:
   - name: v1
     schema:
       openAPIV3Schema:
-        description: AtlasCluster is the Schema for the atlasclusters API
+        description: AtlasCluster is the Schema for the atlasclusters APIdsf
         properties:
           apiVersion:
             description: 'APIVersion defines the versioned schema of this representation
