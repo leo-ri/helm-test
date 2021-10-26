@@ -61,6 +61,36 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/fastapi-sample-app-0.1.0/fastapi-sample-app-0.1.0.tgz
     version: 0.1.0
+  mongodb-atlas-operator:
+  - apiVersion: v2
+    appVersion: 0.6.1
+    created: "2021-10-26T11:38:31.438371906Z"
+    dependencies:
+    - condition: mongodb-atlas-operator-crds.enabled
+      name: mongodb-atlas-operator-crds
+      repository: https://mongodb.github.io/helm-charts
+      version: 0.2.1
+    description: 'MongoDB Atlas Operator - a Helm chart for installing and upgrading
+      Atlas Operator: the official Kubernetes operator allowing to manage MongoDB
+      Atlas resources from Kubernetes'
+    digest: 4e175e5fc446ede7a4897da6e6a615d7b20c26ee1788d83485f1902def305376
+    home: https://github.com/mongodb/mongodb-atlas-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - mongodb
+    - atlas
+    - database
+    - cluster
+    - nosql
+    kubeVersion: '>=1.15.0-0'
+    maintainers:
+    - email: support@mongodb.com
+      name: MongoDB
+    name: mongodb-atlas-operator
+    type: application
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/mongodb-atlas-operator-0.2.4/mongodb-atlas-operator-0.2.4.tgz
+    version: 0.2.4
   mongodb-atlas-operator-crds:
   - apiVersion: v2
     appVersion: 0.6.1
@@ -153,4 +183,4 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/mongodb-enterprise-opsmanager-0.2.5/mongodb-enterprise-opsmanager-0.2.5.tgz
     version: 0.2.5
-generated: "2021-10-25T17:39:52.76319575Z"
+generated: "2021-10-26T11:38:31.438378506Z"
