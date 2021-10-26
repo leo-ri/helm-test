@@ -102,8 +102,9 @@ has_changed() {
 
     tag_version=$(echo "$tag" | awk -F '-' '{print $NF}') # sample-0.1.1 | 0.1.1
     chart_version=$(awk '/version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
-
-    if [[ "$tag_version" != "$chart_version" ]] && [[ -z "$changed_files" ]]; then
+    echo "version from tag: $tag_version"
+    echo "version from chart: $chart_version"
+    if [[ "$tag_version" != "$chart_version" ]] && [[ ! -z "$changed_files" ]]; then
         return 1
     else
         return 0
