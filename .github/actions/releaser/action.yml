@@ -1,19 +1,22 @@
 name: "Helm Chart Releaser"
 description: "Host a Helm charts repo on GitHub Pages"
-author: "The Helm authors"
-branding:
-  color: blue
-  icon: anchor
 inputs:
   version:
     description: "The chart-releaser version to use (default: v1.2.1)"
+    required: false
   config:
     description: "The relative path to the chart-releaser config file"
+    required: false
   charts_dir:
-    description: The charts directory
+    description: "The charts directory"
+    required: true
     default: charts
   charts_repo_url:
     description: "The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)"
+    required: true
+  target_folders:
+    description: Specific charts folder incide charts_dir for releasing
+    required: false
 runs:
   using: composite
   steps:
