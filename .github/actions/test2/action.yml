@@ -1,0 +1,13 @@
+name: 'Changelog'
+description: 'copy commit messages from git log to the file'
+inputs:
+  test:
+    description: "test"
+    required: false
+runs:
+  using: composite
+  steps:
+    - run: |
+        chmod +x "$GITHUB_ACTION_PATH/cr.sh"
+        "$GITHUB_ACTION_PATH/cr.sh"
+      shell: bash

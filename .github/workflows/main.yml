@@ -30,6 +30,22 @@ jobs:
               atlas-operator-crd
               ent-operator
 
+  test2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Helm Chart Dependency Releaser
+        uses: ./.github/actions/test2
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
+          test: |
+              atlas-operator-crd
+              ent-operator
+
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
