@@ -22,8 +22,7 @@ main() {
 
     print_line_separator
     echo 'Found target folders for release...'
-    echo "${INPUT_TARGET}"
-    mapfile -t target< <(echo "${INPUT_TARGET}")
+    IFS=" " read -r -a target <<< "${INPUT_TARGET}"
     echo "${target[1]}"
     if [[ -z "${target[*]}" ]]; then
         echo "EMPTY?"
