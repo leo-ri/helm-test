@@ -6,32 +6,21 @@ set -o errexit
 set -o nounset
 set -o pipefail
 
-DEFAULT_CHART_RELEASER_VERSION=v1.2.1
-
-show_help() {
-cat << EOF
-Usage: $(basename "$0") <options>
-
-    -h, --help               Display help
-    -v, --version            The chart-releaser version to use (default: $DEFAULT_CHART_RELEASER_VERSION)"
-        --config             The path to the chart-releaser config file
-    -d, --charts-dir         The charts directory (default: charts)
-    -u, --charts-repo-url    The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
-    -o, --owner              The repo owner
-    -r, --repo               The repo name
-EOF
-}
+# DEFAULT_CHART_RELEASER_VERSION=v1.2.1
 
 main() {
-    local version="$DEFAULT_CHART_RELEASER_VERSION"
-    local config=
-    local charts_dir=charts
-    local owner=
-    local repo=
-    local charts_repo_url=
-    local chart
+    local version="${INPUT_VERSION:-v1.2.1}"
+    local config="${INPUT_CONFIG:-}"
+    local charts_dir="${INPUT_CHARTS_DIR:-charts}"
+    local owner
+    local repo
+    local charts_repo_url
 
-    parse_command_line "$@"
+    owner=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
+    repo=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
+    charts_repo_url="${INPUT_CHARTS_REPO_URL:-https://$owner.github.io/$repo}"
+
+    # parse_command_line "$@"
 
     : "${CR_TOKEN:?Environment variable CR_TOKEN must be set}"
 
@@ -51,15 +40,6 @@ main() {
 print_line_separator() {
     echo "============================================="
 }
-
-# find_dependencies names in $charts_dir folder and print multiline
-# find_dependency_folders() {
-#     mapfile -t dependencies< <(awk '/dependencies:/,/name:/{print $0}' $charts_dir/*/Chart.yaml | awk -F ": " '/name/{print $2}')
-#     for dependency in "${dependencies[@]}"; do
-#         folder_name=$(grep "^name: $dependency" $charts_dir/*/Chart.yaml | awk -F / '{print $2}')
-#         [[ ! "${target_folders[*]}" =~  $folder_name ]] && target_folders+=("$folder_name") && echo "$folder_name"
-#     done
-# }
 
 release_charts_inside_folders() {
     local folders=("$@")
@@ -120,97 +100,97 @@ get_latest_tag(){
     git describe --tags --abbrev=0 --match="$name*"
 }
 
-parse_command_line() {
-    while :; do
-        case "${1:-}" in
-            -h|--help)
-                show_help
-                exit
-                ;;
-            --config)
-                if [[ -n "${2:-}" ]]; then
-                    config="$2"
-                    shift
-                else
-                    echo "ERROR: '--config' cannot be empty." >&2
-                    show_help
-                    exit 1
-                fi
-                ;;
-            -v|--version)
-                if [[ -n "${2:-}" ]]; then
-                    version="$2"
-                    shift
-                else
-                    echo "ERROR: '-v|--version' cannot be empty." >&2
-                    show_help
-                    exit 1
-                fi
-                ;;
-            -d|--charts-dir)
-                if [[ -n "${2:-}" ]]; then
-                    charts_dir="$2"
-                    shift
-                else
-                    echo "ERROR: '-d|--charts-dir' cannot be empty." >&2
-                    show_help
-                    exit 1
-                fi
-                ;;
-            -u|--charts-repo-url)
-                if [[ -n "${2:-}" ]]; then
-                    charts_repo_url="$2"
-                    shift
-                else
-                    echo "ERROR: '-u|--charts-repo-url' cannot be empty." >&2
-                    show_help
-                    exit 1
-                fi
-                ;;
-            -o|--owner)
-                if [[ -n "${2:-}" ]]; then
-                    owner="$2"
-                    shift
-                else
-                    echo "ERROR: '--owner' cannot be empty." >&2
-                    show_help
-                    exit 1
-                fi
-                ;;
-            -r|--repo)
-                if [[ -n "${2:-}" ]]; then
-                    repo="$2"
-                    shift
-                else
-                    echo "ERROR: '--repo' cannot be empty." >&2
-                    show_help
-                    exit 1
-                fi
-                ;;
-            *)
-                break
-                ;;
-        esac
+# parse_command_line() {
+#     while :; do
+#         case "${1:-}" in
+#             -h|--help)
+#                 show_help
+#                 exit
+#                 ;;
+#             --config)
+#                 if [[ -n "${2:-}" ]]; then
+#                     config="$2"
+#                     shift
+#                 else
+#                     echo "ERROR: '--config' cannot be empty." >&2
+#                     show_help
+#                     exit 1
+#                 fi
+#                 ;;
+#             -v|--version)
+#                 if [[ -n "${2:-}" ]]; then
+#                     version="$2"
+#                     shift
+#                 else
+#                     echo "ERROR: '-v|--version' cannot be empty." >&2
+#                     show_help
+#                     exit 1
+#                 fi
+#                 ;;
+#             -d|--charts-dir)
+#                 if [[ -n "${2:-}" ]]; then
+#                     charts_dir="$2"
+#                     shift
+#                 else
+#                     echo "ERROR: '-d|--charts-dir' cannot be empty." >&2
+#                     show_help
+#                     exit 1
+#                 fi
+#                 ;;
+#             -u|--charts-repo-url)
+#                 if [[ -n "${2:-}" ]]; then
+#                     charts_repo_url="$2"
+#                     shift
+#                 else
+#                     echo "ERROR: '-u|--charts-repo-url' cannot be empty." >&2
+#                     show_help
+#                     exit 1
+#                 fi
+#                 ;;
+#             -o|--owner)
+#                 if [[ -n "${2:-}" ]]; then
+#                     owner="$2"
+#                     shift
+#                 else
+#                     echo "ERROR: '--owner' cannot be empty." >&2
+#                     show_help
+#                     exit 1
+#                 fi
+#                 ;;
+#             -r|--repo)
+#                 if [[ -n "${2:-}" ]]; then
+#                     repo="$2"
+#                     shift
+#                 else
+#                     echo "ERROR: '--repo' cannot be empty." >&2
+#                     show_help
+#                     exit 1
+#                 fi
+#                 ;;
+#             *)
+#                 break
+#                 ;;
+#         esac
 
-        shift
-    done
+#         shift
+#     done
 
-    if [[ -z "$owner" ]]; then
-        echo "ERROR: '-o|--owner' is required." >&2
-        show_help
-        exit 1
-    fi
+#     if [[ -z "$owner" ]]; then
+#         echo "ERROR: '-o|--owner' is required." >&2
+#         show_help
+#         exit 1
+#     fi
 
-    if [[ -z "$repo" ]]; then
-        echo "ERROR: '-r|--repo' is required." >&2
-        show_help
-        exit 1
-    fi
+#     if [[ -z "$repo" ]]; then
+#         echo "ERROR: '-r|--repo' is required." >&2
+#         show_help
+#         exit 1
+#     fi
 
-    if [[ -z "$charts_repo_url" ]]; then
-        charts_repo_url="https://$owner.github.io/$repo"
-    fi
-}
+#     if [[ -z "$charts_repo_url" ]]; then
+#         charts_repo_url="https://$owner.github.io/$repo"
+#     fi
+# }
 
 install_chart_releaser() {
     print_line_separator
@@ -283,4 +263,4 @@ update_index() {
     cr index "${args[@]}"
 }
 
-main "$@"
+main
