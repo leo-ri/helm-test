@@ -7,25 +7,19 @@ set -o nounset
 set -o pipefail
 
 main() {
-    local version="${INPUT_VERSION:-v1.2.1}"
-    local config="${INPUT_CONFIG:-}"
-    local charts_dir="${INPUT_CHARTS_DIR:-charts}"
-    local owner
-    local repo
-    local charts_repo_url
-
-    owner=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
-    repo=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
-    charts_repo_url="${INPUT_CHARTS_REPO_URL:-https://$owner.github.io/$repo}"
+    local version=${VERSION:-v1.2.1}
+    local config=${CONFIG:-}
+    local charts_dir=${CHART_DIR:-charts}
+    local charts_repo_url=${CHARTS_REPO_URL:-}
+    local target=("$@")
+    local owner=${OWNER:-}
+    local repo=${REPO:-}
 
     : "${CR_TOKEN:?Environment variable CR_TOKEN must be set}"
 
     print_line_separator
     echo 'Found target folders for release...'
-    IFS=" " read -r -a target <<< "${INPUT_TARGET}"
-    echo "${target[1]}"
     if [[ -z "${target[*]}" ]]; then
-        echo "EMPTY?"
         mapfile -t target< <(find "$charts_dir" -maxdepth 2 -type f -name Chart.yaml | awk -F / '{print $2}')
     fi
 
@@ -168,4 +162,4 @@ update_index() {
     cr index "${args[@]}"
 }
 
-main
+main "$@"
