@@ -9,7 +9,7 @@ inputs:
     required: false
   charts_dir:
     description: "The charts directory"
-    required: true
+    required: false
     default: charts
   target_folders:
     description: "Specific charts folder inside <charts_dir> for releasing"
@@ -20,25 +20,5 @@ inputs:
 runs:
   using: composite
   steps:
-    - run: |
-        # owner=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
-        # repo=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
-
-        # args=(--owner "$owner" --repo "$repo")
-        # args+=(--charts-dir "${{ inputs.charts_dir }}")
-
-        # if [[ -n "${{ inputs.version }}" ]]; then
-        #     args+=(--version "${{ inputs.version }}")
-        # fi
-
-        # if [[ -n "${{ inputs.config }}" ]]; then
-        #     args+=(--config "${{ inputs.config }}")
-        # fi
-
-        # if [[ -n "${{ inputs.charts_repo_url }}" ]]; then
-        #     args+=(--charts-repo-url "${{ inputs.charts_repo_url }}")
-        # fi
-
-        # "$GITHUB_ACTION_PATH/cr.sh" "${args[@]}"
-        "$GITHUB_ACTION_PATH/cr.sh"
+    - run: "$GITHUB_ACTION_PATH/cr.sh"
       shell: bash
