@@ -19,10 +19,14 @@ runs:
   using: composite
   steps:
     - run: |
-        chmod +x "$GITHUB_ACTION_PATH/cr.sh"
         export VERSION="${{ inputs.version }}"
         export CHART_DIR="${{ inputs.charts_dir }}"
-        export CHART_REPO_URL="${{ inputs.charts_repo_url }}"
+        export CHARTS_REPO_URL="${{ inputs.charts_repo_url }}"
+
+        owner=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
+        repo=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
+        export OWNER=$owner
+        export REPO=$repo
 
         mapfile -t target< <(echo ${{ inputs.target }})
         "$GITHUB_ACTION_PATH/cr.sh" "${target[@]}"

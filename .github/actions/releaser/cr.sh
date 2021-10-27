@@ -8,7 +8,6 @@ set -o pipefail
 
 main() {
     local version=${VERSION:-v1.2.1}
-    local config=${CONFIG:-}
     local charts_dir=${CHART_DIR:-charts}
     local charts_repo_url=${CHARTS_REPO_URL:-}
     local target=("$@")
