@@ -62,7 +62,7 @@ jobs:
           # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
           # owner: leo-ri
           # repo: helm-test
-          target_folders: |
+          target: |
             atlas-operator-crd
             ent-operator
 

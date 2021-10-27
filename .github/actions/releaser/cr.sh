@@ -22,8 +22,11 @@ main() {
 
     print_line_separator
     echo 'Found target folders for release...'
-    mapfile -t target< <(echo "${INPUT_TARGET_FOLDERS:-}")
+    echo "${INPUT_TARGET}"
+    mapfile -t target< <(echo "${INPUT_TARGET}")
+    echo "${target[1]}"
     if [[ -z "${target[*]}" ]]; then
+        echo "EMPTY?"
         mapfile -t target< <(find "$charts_dir" -maxdepth 2 -type f -name Chart.yaml | awk -F / '{print $2}')
     fi
 

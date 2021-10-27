@@ -11,7 +11,7 @@ inputs:
     description: "The charts directory"
     required: false
     default: charts
-  target_folders:
+  target:
     description: "Specific charts folder inside <charts_dir> for releasing"
     required: false
   charts_repo_url:
