@@ -43,6 +43,9 @@ jobs:
         with:
           # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
           test: "atlas-operator-crd ent-operator"
+          test2: |
+            atlas-operator-crd
+            ent-operator
 
   # This workflow contains a single job called "build"
   build:

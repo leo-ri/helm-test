@@ -9,5 +9,5 @@ runs:
   steps:
     - run: |
         chmod +x "$GITHUB_ACTION_PATH/cr.sh"
-        "$GITHUB_ACTION_PATH/cr.sh"
+        "$GITHUB_ACTION_PATH/cr.sh" "${{ inputs.test }}"  "${{ inputs.test2 }}"
       shell: bash
