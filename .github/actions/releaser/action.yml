@@ -5,16 +5,13 @@ inputs:
     description: "The chart-releaser version to use (default: v1.2.1)"
     required: false
     default: v1.2.1
-  config:
-    description: "The relative path to the chart-releaser config file"
-    required: false
   charts_dir:
     description: "The charts directory"
     required: false
     default: charts
   charts_repo_url:
     description: "The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)"
-    required: false
+    required: true
   target:
     description: "Specific charts folder inside <charts_dir> for releasing"
     required: false
@@ -24,18 +21,8 @@ runs:
     - run: |
         chmod +x "$GITHUB_ACTION_PATH/cr.sh"
         export VERSION="${{ inputs.version }}"
-        export CONFIG="${{ inputs.config }}"
         export CHART_DIR="${{ inputs.charts_dir }}"
-
-        charts_repo_url="${{ inputs.charts_repo_url }}"
-        if [[ -n "$charts_repo_url" ]]; then
-          owner=$(cut -d '/' -f 1 <<< "$GITHUB_REPOSITORY")
-          repo=$(cut -d '/' -f 2 <<< "$GITHUB_REPOSITORY")
-          charts_repo_url="https://$owner.github.io/$repo"
-        fi
-        export OWNER=$owner
-        export REPO=$repo
-        export CHART_REPO_URL="$charts_repo_url"
+        export CHART_REPO_URL="${{ inputs.charts_repo_url }}"
 
         mapfile -t target< <(echo ${{ inputs.target }})
         "$GITHUB_ACTION_PATH/cr.sh" "${target[@]}"

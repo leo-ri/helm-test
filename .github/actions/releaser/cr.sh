@@ -130,9 +130,6 @@ package_charts() {
         folder="$charts_dir/$chart"
         if [[ -d "$folder" ]]; then
             local args=("$folder" --package-path .cr-release-packages)
-            if [[ -n "$config" ]]; then
-                args+=(--config "$config")
-            fi
 
             echo "Packaging chart folder '$folder'..."
             cr package "${args[@]}"
@@ -144,9 +141,6 @@ package_charts() {
 
 release_charts() {
     local args=(-o "$owner" -r "$repo" -c "$(git rev-parse HEAD)")
-    if [[ -n "$config" ]]; then
-        args+=(--config "$config")
-    fi
 
     echo 'Releasing charts...'
     cr upload "${args[@]}"
@@ -154,9 +148,6 @@ release_charts() {
 
 update_index() {
     local args=(-o "$owner" -r "$repo" -c "$charts_repo_url" --push)
-    if [[ -n "$config" ]]; then
-        args+=(--config "$config")
-    fi
 
     echo 'Updating charts repo index...'
     cr index "${args[@]}"

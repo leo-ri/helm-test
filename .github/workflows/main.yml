@@ -75,12 +75,13 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
         with:
+          charts_repo_url: https://leori.github.com/helm-test
           target: |
             atlas-operator-crds
-            ent-operator
 
       - name: Helm Chart Releaser
         uses: ./.github/actions/releaser
         env:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
-          
+        with:
+          charts_repo_url: https://leori.github.com/helm-test
