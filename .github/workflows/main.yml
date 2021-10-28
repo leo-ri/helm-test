@@ -34,6 +34,10 @@ jobs:
           test2: |
             atlas-operator-crd
             ent-operator
+      - name: test
+        run: |
+          echo test
+          echo $POWER
 
   # This workflow contains a single job called "build"
   build:

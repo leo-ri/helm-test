@@ -22,3 +22,4 @@ echo "t2: " "${t2[1]}"
 }
 mapfile -t target< <(echo "$1" )
 main "${target[@]}"
+export POWER=TEST

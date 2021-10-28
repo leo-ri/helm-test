@@ -111,8 +111,8 @@ install_chart_releaser() {
         rm -f cr.tar.gz
 
         echo 'Adding cr directory to PATH...'
-        export PATH="$cache_dir:$PATH"
     fi
+    export PATH="$cache_dir:$PATH"
 }
 
 cleanup_releaser() {
