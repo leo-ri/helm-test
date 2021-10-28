@@ -18,6 +18,39 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Helm Chart Dependency Releaser
+        uses: ./.github/actions/test
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
+          test1: "sdfsdf sdfsdf"
+          test2: |
+              atlas-operator-crd
+              ent-operator
+  test2:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v1
+
+      - name: Helm Chart Dependency Releaser
+        uses: ./.github/actions/test2
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+        with:
+          # The GitHub Pages URL to the charts repo (default: https://<owner>.github.io/<repo>)
+          test: "atlas-operator-crd ent-operator"
+          test2: |
+            atlas-operator-crd
+            ent-operator
+
   # This workflow contains a single job called "build"
   build:
     # The type of runner that the job will run on
@@ -49,6 +82,7 @@ jobs:
           charts_repo_url: https://leori.github.com/helm-test
           target: |
             atlas-operator-crds
+            ent-operator
 
       - name: Helm Chart Releaser
         uses: ./.github/actions/releaser
