@@ -20,7 +20,5 @@ local t2=("$@")
 echo "t2: " "${t2[*]}"
 echo "t2: " "${t2[1]}"
 }
-t=$1
-mapfile -t target< <(echo "$t" )
-
+mapfile -t target< <(echo "$1" )
 main "${target[@]}"
