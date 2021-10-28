@@ -3,11 +3,24 @@
 set -eou pipefail
 
 # simple changelog: get all commits beetween 2 tags and put them into file
-test=$1
-test2=$2
-IFS=" " read -r -a dependencies<<<"${test}"
+# test=$1
+# IFS=" " read -r -a dependencies<<<"${test}"
+# echo "dependencies: " "${dependencies[*]}"
+# echo "dependencies1:" "${dependencies[1]}"
+
+
+test2=$1
 mapfile -t t2< <(echo "$test2")
-echo "dependencies: " "${dependencies[*]}"
-echo "dependencies1:" "${dependencies[1]}"
+
 echo "t2: " "${t2[*]}"
 echo "t2: " "${t2[1]}"
+
+main(){
+local t2=("$@")
+echo "t2: " "${t2[*]}"
+echo "t2: " "${t2[1]}"
+}
+t=$1
+mapfile -t target< <(echo "$t" )
+
+main "${target[@]}"
