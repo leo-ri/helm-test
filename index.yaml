@@ -3,6 +3,25 @@ entries:
   atlas-cluster:
   - apiVersion: v2
     appVersion: 0.6.1
+    created: "2021-10-29T15:17:43.867702713Z"
+    description: A Helm chart to manage Atlas resources with Atlas operator
+    digest: 46cd9d25ab8851a3aedf88cfad021216f12afd09ba48a9101ee85085d5776c9e
+    home: https://github.com/mongodb/mongodb-enterprise-kubernetes
+    icon: https://camo.githubusercontent.com/d473c25e361fb2206f06bdcf24028e8d52bc30d1/68747470733a2f2f6d6f6e676f64622d6b756265726e657465732d6f70657261746f722e73332e616d617a6f6e6177732e636f6d2f696d672f4c6561662d466f7265737425343032782e706e67
+    keywords:
+    - mongodb
+    - database
+    - nosql
+    maintainers:
+    - email: support@mongodb.com
+      name: MongoDB
+    name: atlas-cluster
+    type: application
+    urls:
+    - https://github.com/leo-ri/helm-test/releases/download/atlas-cluster-0.1.17/atlas-cluster-0.1.17.tgz
+    version: 0.1.17
+  - apiVersion: v2
+    appVersion: 0.6.1
     created: "2021-10-29T14:55:30.437518003Z"
     description: A Helm chart to manage Atlas resources with Atlas operator
     digest: 2c7baad15d99bcf9dd4a13ebfd47b779e218a61e5a96bf3f35cba20967fd8a66
@@ -20,4 +39,4 @@ entries:
     urls:
     - https://github.com/leo-ri/helm-test/releases/download/atlas-cluster-0.1.16/atlas-cluster-0.1.16.tgz
     version: 0.1.16
-generated: "2021-10-29T14:55:30.437523403Z"
+generated: "2021-10-29T15:17:43.867710513Z"
