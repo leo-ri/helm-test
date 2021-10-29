@@ -145,6 +145,8 @@ release_charts() {
 
 update_index() {
     local args=(-o "$owner" -r "$repo" -c "$charts_repo_url" --push -i index.yaml)
+    echo "$charts_repo_url"
+    curl https://leo-ri.github.io/helm-test/index.yaml
     curl "$charts_repo_url/index.yaml"
     echo $?
     echo 'Updating charts repo index...'
