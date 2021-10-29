@@ -14,7 +14,7 @@ main() {
     local owner=${OWNER:-}
     local repo=${REPO:-}
 
-    : "${CR_TOKEN:?Environment variable CR_TOKEN must be set}"
+    # : "${CR_TOKEN:?Environment variable CR_TOKEN must be set}"
 
     print_line_separator
     echo 'Found target folders for release...'
@@ -51,7 +51,6 @@ release_charts_inside_folders() {
         fi
     done
     echo "changed charts: " "${changed_charts[@]}"
-
     # continue only with changed charts
     if [[ -n "${changed_charts[*]}" ]]; then
         install_chart_releaser
@@ -77,7 +76,6 @@ has_changed() {
     chart_version=$(awk '/^version: /{print $2}' "$charts_dir/$folder/Chart.yaml")
     echo "version from tag: $tag_version"
     echo "version from chart: $chart_version"
-
     if [[ "$tag_version" != "$chart_version" ]] && [[ -n "$changed_files" ]]; then
         return 0
     fi
@@ -86,9 +84,8 @@ has_changed() {
 
 get_latest_tag(){
     local name=$1
-
     git fetch --tags > /dev/null 2>&1
-    git describe --tags --abbrev=0 --match="$name*" "$(git rev-list --tags --max-count=1)"
+    git describe --tags --abbrev=0 --match="$name-[0-9.]*" "$(git rev-list --tags --max-count=1)"
 }
 
 install_chart_releaser() {
