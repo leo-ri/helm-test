@@ -65,7 +65,7 @@ jobs:
       - name: Helm Chart Dependency Releaser
         uses: ./.github/actions/releaser
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: "${{ secrets.SECRET30 }}"
         with:
           charts_repo_url: https://leori.github.com/helm-test
           target: |
@@ -75,6 +75,6 @@ jobs:
       - name: Helm Chart Releaser
         uses: ./.github/actions/releaser
         env:
-          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+          CR_TOKEN: "${{ secrets.SECRET30 }}"
         with:
           charts_repo_url: https://leori.github.com/helm-test
