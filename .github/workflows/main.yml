@@ -67,7 +67,7 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.SECRET30 }}"
         with:
-          charts_repo_url: https://leo-ri.github.com/helm-test
+          charts_repo_url: https://leo-ri.github.io/helm-test
           target: |
             atlas-operator-crds
             ent-operator
@@ -77,4 +77,4 @@ jobs:
         env:
           CR_TOKEN: "${{ secrets.SECRET30 }}"
         with:
-          charts_repo_url: https://leo-ri.github.com/helm-test
+          charts_repo_url: https://leo-ri.github.io/helm-test
