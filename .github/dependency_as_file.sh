@@ -11,7 +11,7 @@ CRD_DIRECTORY=$1
 OPERATOR_DIRECTORY=$2
 
 if [[ -z "${CRD_DIRECTORY}" ]] || [[ -z "${OPERATOR_DIRECTORY}" ]]; then
-    echo "Please pass parameters:"
+    echo "Please pass parametersss:"
     echo "_1: CRD directory name"
     echo "_2: Operator directory name"
     echo ""
