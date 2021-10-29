@@ -144,7 +144,7 @@ release_charts() {
 }
 
 update_index() {
-    local args=(-o "$owner" -r "$repo" -c "$charts_repo_url" --push)
+    local args=(-o "$owner" -r "$repo" -c "$charts_repo_url" --push -i index.yaml)
 
     echo 'Updating charts repo index...'
     cr index "${args[@]}"
